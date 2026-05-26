@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Gece Nöbeti · Ana Sistem · midwatch-01</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@200;300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&family=Newsreader:ital,wght@1,300;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg:        #0a0a0c;
+    --bg-2:      #0d0d10;
+    --ink:       #e6e3da;
+    --ink-2:     #b9b5aa;
+    --ink-3:     #6e6a60;
+    --ink-4:     #3a3833;
+    --rule:      #28261f;
+    --rule-2:    #1a1815;
+    --accent:    #d99752;
+    --accent-2:  #a06d36;
+    --warn:      #d96b3a;
+    --crit:      #b14a3a;
+    --ok:        #6a8472;
+    --scan-opacity: 0.06;
+    --grain-opacity: 0.06;
+  }
+  body[data-palette="crt"] {
+    --bg:#040805; --bg-2:#070c08;
+    --ink:#cfe8d3; --ink-2:#7ec48a; --ink-3:#3c6e48; --ink-4:#1f3528;
+    --rule:#163320; --rule-2:#0c1d14;
+    --accent:#7ee08e; --accent-2:#4ea35d;
+    --warn:#d6e35e; --crit:#e07a6a; --ok:#7ee08e;
+  }
+  body[data-palette="blue"] {
+    --bg:#080c12; --bg-2:#0b1119;
+    --ink:#dde6f0; --ink-2:#8fb3d4; --ink-3:#4c6a85; --ink-4:#283a4d;
+    --rule:#1a2a3a; --rule-2:#11192a;
+    --accent:#7fb0d8; --accent-2:#4c7ea5;
+    --warn:#cfa86c; --crit:#c9655a; --ok:#7fb0d8;
+  }
+  body[data-palette="amber"] {
+    --bg:#0b0703; --bg-2:#100905;
+    --ink:#f0d2a2; --ink-2:#c79b67; --ink-3:#7a5836; --ink-4:#3a2917;
+    --rule:#2a1d10; --rule-2:#1a1108;
+    --accent:#e8a868; --accent-2:#a06d36;
+    --warn:#f0a050; --crit:#d96050; --ok:#c2c08a;
+  }
+
+  * { box-sizing: border-box; margin:0; padding:0; }
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "JetBrains Mono", ui-monospace, Menlo, monospace;
+    font-size: 13px;
+    line-height: 1.4;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    user-select: none;
+    -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,var(--scan-opacity)) 0px,
+      rgba(255,255,255,var(--scan-opacity)) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    pointer-events: none;
+    z-index: 9000;
+    mix-blend-mode: overlay;
+  }
+  body::after {
+    content: "";
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at center,
+      transparent 40%,
+      rgba(0,0,0,0.55) 100%);
+    pointer-events: none;
+    z-index: 9001;
+  }
+  body[data-scanlines="off"]::before { display: none; }
+  body[data-vignette="off"]::after { display: none; }
+
+  #grain {
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 9002;
+    opacity: var(--grain-opacity);
+    mix-blend-mode: overlay;
+  }
+  body[data-grain="off"] #grain { display: none; }
+
+  @keyframes flicker {
+    0%,100% { opacity: 1; }
+    97% { opacity: 1; }
+    97.3% { opacity: 0.92; }
+    97.6% { opacity: 1; }
+    98% { opacity: 0.97; }
+    98.2% { opacity: 1; }
+  }
+  body[data-flicker="on"] #root { animation: flicker 18s infinite; }
+
+  .display { font-family: "Barlow Condensed", sans-serif; font-weight: 400; letter-spacing: 0.04em; }
+  .mono    { font-family: "JetBrains Mono", monospace; }
+  .whisper { font-family: "Newsreader", serif; font-style: italic; font-weight: 300; }
+
+  .dim    { color: var(--ink-3); }
+  .dimmer { color: var(--ink-4); }
+  .bright { color: var(--ink); }
+  .amber  { color: var(--accent); }
+  .warn   { color: var(--warn); }
+  .crit   { color: var(--crit); }
+  .ok     { color: var(--ok); }
+
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--ink-4); }
+
+  #root { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
+
+  input, textarea { user-select: text; }
+  button { background: none; border: none; color: inherit; font: inherit; cursor: pointer; padding: 0; }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+  <svg id="grain" xmlns="http://www.w3.org/2000/svg">
+    <filter id="n">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" />
+      <feColorMatrix values="0 0 0 0 0.9  0 0 0 0 0.85  0 0 0 0 0.75  0 0 0 0.6 0" />
+    </filter>
+    <rect width="100%" height="100%" filter="url(#n)" />
+  </svg>
+  <div id="root"></div>
+
+  <script src="live.js"></script>
+  <script type="text/babel" src="surveillance.jsx"></script>
+  <script type="text/babel" src="cores.jsx"></script>
+  <script type="text/babel" src="panels.jsx"></script>
+  <script type="text/babel" src="palette.jsx"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel">
+    /* app.jsx'i NWL hazır olduktan sonra yükle */
+    window._nwlReady.then(() => {
+      const s = document.createElement('script');
+      s.type = 'text/babel';
+      s.src = 'app.jsx';
+      document.body.appendChild(s);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1 @@
+function e(e){if(!Number.isFinite(e)||e<=0)return`0 B`;let t=[`B`,`KB`,`MB`,`GB`,`TB`],n=Math.min(Math.floor(Math.log(e)/Math.log(1024)),t.length-1),r=e/1024**n;return`${r.toFixed(r>=10?0:1)} ${t[n]}`}function t(t){return`${e(t)}/s`}function n(e){return`${e.toFixed(1)}%`}export{n,t as r,e as t};

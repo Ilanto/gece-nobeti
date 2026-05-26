@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="wtm-csrf-token" content="__WTM_CSRF_TOKEN__" />
+    <title>Windows Task Manager</title>
+    <script>
+      (() => {
+        const key = "wtm-theme";
+        const stored = localStorage.getItem(key) || "\"system\"";
+        const parsed = JSON.parse(stored);
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const resolved = parsed === "system" ? (prefersDark ? "dark" : "light") : parsed;
+        document.documentElement.dataset.theme = resolved;
+        document.documentElement.dataset.themePreference = parsed;
+      })();
+    </script>
+    <script type="module" crossorigin src="/assets/index-DqVmAxe2.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-DF2fYuay.js">
+    <link rel="modulepreload" crossorigin href="/assets/data-CQOjSUN4.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-V1ca2jC1.js">
+    <link rel="modulepreload" crossorigin href="/assets/card-DuwHPE_d.js">
+    <link rel="modulepreload" crossorigin href="/assets/page-skeleton-Gy9W03cW.js">
+    <link rel="modulepreload" crossorigin href="/assets/button-CoLWFcP6.js">
+    <link rel="modulepreload" crossorigin href="/assets/format-B9z-Z-kz.js">
+    <link rel="modulepreload" crossorigin href="/assets/meters-CAiF8YnO.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-CiKw95hD.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
