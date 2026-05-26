@@ -604,4 +604,6 @@ function App() {
   );
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+window._nwlReady
+  .then(() => ReactDOM.createRoot(document.getElementById("root")).render(<App />))
+  .catch(err => console.error('[Gece Nöbeti] başlatma hatası:', err));
