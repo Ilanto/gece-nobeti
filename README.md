@@ -6,7 +6,7 @@
   <img src="https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat-square&logo=go&logoColor=white" />
   <img src="https://img.shields.io/badge/platform-Linux-FCC624?style=flat-square&logo=linux&logoColor=black" />
   <img src="https://img.shields.io/github/v/release/Ilanto/gece-nobeti?style=flat-square&color=d99752&label=release" />
-  <img src="https://img.shields.io/badge/demo-GitHub%20Pages-222?style=flat-square&logo=github&logoColor=white" />
+  <a href="https://ilanto.github.io/gece-nobeti/"><img src="https://img.shields.io/badge/demo-GitHub%20Pages-222?style=flat-square&logo=github&logoColor=white" /></a>
   <img src="https://img.shields.io/badge/license-MIT-6a8472?style=flat-square" />
 </p>
 
