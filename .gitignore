@@ -1,0 +1,17 @@
+# Binaries
+ldm
+ldm-linux-amd64
+ldm-linux-arm64
+ldm-*
+*.exe
+
+# Build output
+/linux-dashboard
+
+# Config
+*.pid
+
+# Editor
+.idea/
+.vscode/
+*.swp
