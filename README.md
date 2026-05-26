@@ -2,6 +2,14 @@
 
 **TR** | [EN](#english)
 
+<p align="center">
+  <img src="https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat-square&logo=go&logoColor=white" />
+  <img src="https://img.shields.io/badge/platform-Linux-FCC624?style=flat-square&logo=linux&logoColor=black" />
+  <img src="https://img.shields.io/github/v/release/Ilanto/gece-nobeti?style=flat-square&color=d99752&label=release" />
+  <img src="https://img.shields.io/badge/demo-GitHub%20Pages-222?style=flat-square&logo=github&logoColor=white" />
+  <img src="https://img.shields.io/badge/license-MIT-6a8472?style=flat-square" />
+</p>
+
 ---
 
 ## Türkçe
@@ -11,7 +19,10 @@ Tek bir Go binary'si olarak çalışır — kurulum gerekmez, bağımlılık yok
 
 **Canlı Demo →** [ilanto.github.io/gece-nobeti](https://ilanto.github.io/gece-nobeti/)
 
-### Ekran Görüntüsü
+### Demo
+
+<!-- GIF buraya gelecek -->
+> 📹 Demo kaydı yakında eklenecek.
 
 ![Gece Nöbeti Dashboard](https://raw.githubusercontent.com/Ilanto/gece-nobeti/master/docs/preview.png)
 
@@ -72,6 +83,11 @@ Night Watch is a terminal-aesthetic Linux system monitoring dashboard.
 It runs as a single Go binary — no installation, no dependencies.
 
 **Live Demo →** [ilanto.github.io/gece-nobeti](https://ilanto.github.io/gece-nobeti/)
+
+### Demo
+
+<!-- GIF goes here -->
+> 📹 Demo recording coming soon.
 
 ### Features
 
