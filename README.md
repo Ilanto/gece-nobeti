@@ -50,10 +50,12 @@ go build -o ldm ./cmd/ldm/
 
 Tarayıcıda `http://localhost:19876` adresi otomatik açılır.
 
+Farklı bir adres/port için: `./ldm --bind 0.0.0.0:8080`
+
 **Gereksinimler:**
 - Go 1.21+
 - Linux (kernel 3.14+ önerilir — `MemAvailable` için)
-- `journalctl` — syslog için (systemd)
+- `journalctl` — syslog için (systemd); yoksa syslog paneli boş kalır, diğer her şey çalışır
 - `ip` komutu — ağ arayüzü IP'leri için
 
 ### Klavye Kısayolları
@@ -113,10 +115,12 @@ go build -o ldm ./cmd/ldm/
 
 Then open `http://localhost:19876` in your browser.
 
+To bind to a different address/port: `./ldm --bind 0.0.0.0:8080`
+
 **Requirements:**
 - Go 1.21+
 - Linux (kernel 3.14+ recommended — for `MemAvailable`)
-- `journalctl` — for syslog (systemd)
+- `journalctl` — for syslog (systemd); if absent, the syslog panel stays empty but everything else works
 - `ip` command — for network interface addresses
 
 ### Keyboard Shortcuts

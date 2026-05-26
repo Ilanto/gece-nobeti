@@ -28,6 +28,7 @@ var version = "dev"
 
 func main() {
 	cfgPath := flag.String("config", "", "Path to config file")
+	bind := flag.String("bind", "", "Override listen address (e.g. 0.0.0.0:19876)")
 	v := flag.Bool("v", false, "Print version")
 	flag.Parse()
 
@@ -97,6 +98,9 @@ func main() {
 
 	// HTTP server
 	addr := fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port)
+	if *bind != "" {
+		addr = *bind
+	}
 	srv := server.New(addr, col, store, advisor, emitter)
 
 	// Open browser
