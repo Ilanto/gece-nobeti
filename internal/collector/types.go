@@ -95,6 +95,8 @@ type ProcessInfo struct {
 	Status        string  `json:"status"`
 	Connections   int     `json:"connections"`
 	PriorityClass uint32  `json:"priority_class"`
+	UID           uint32  `json:"uid"`
+	CoreID        uint32  `json:"core_id"`
 }
 
 // ProcessNode is a node in a process tree.
