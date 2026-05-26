@@ -1,0 +1,154 @@
+server:
+  host: 127.0.0.1
+  port: 19876
+  open_browser: true
+
+monitoring:
+  interval: 1s
+  process_tree_interval: 2s
+  port_scan_interval: 3s
+  gpu_interval: 2s
+  history_duration: 10m
+  max_processes: 2000
+
+controller:
+  protected_processes:
+    - systemd
+    - kthreadd
+    - init
+    - sshd
+    - dbus
+    - systemd-journal
+    - systemd-logind
+    - containerd
+    - docker
+    - polkitd
+  confirm_kill_system: true
+
+anomaly:
+  analysis_interval: 2s
+  spawn_storm:
+    enabled: true
+    max_children_per_minute: 20
+    max_total_children: 50
+    action: alert
+  memory_leak:
+    enabled: true
+    window: 5m
+    min_growth_rate: 10MB/min
+    min_r_squared: 0.8
+    memory_threshold: 2GB
+    action: alert
+  hung_process:
+    enabled: true
+    zero_activity_threshold: 120s
+    critical_hung_threshold: 300s
+    idle_whitelist:
+      - kworker
+      - migration
+      - watchdog
+    action: alert
+  orphan:
+    enabled: true
+    resource_threshold_cpu: 1
+    resource_threshold_memory: 100MB
+    action: alert
+  runaway_cpu:
+    enabled: true
+    cpu_threshold: 90
+    duration_threshold: 60s
+    critical_duration: 180s
+    action: alert
+  port_conflict:
+    enabled: true
+    time_wait_threshold: 120s
+    close_wait_threshold: 60s
+    action: alert
+  network_anomaly:
+    enabled: true
+    connection_sigma: 3
+    max_system_connections: 10000
+    action: alert
+  new_process:
+    enabled: true
+    suspicious_paths:
+      - "/tmp/"
+      - "/var/tmp/"
+      - "/dev/shm/"
+    action: info
+
+notifications:
+  tray_balloon: false
+  balloon_rate_limit: 30s
+  balloon_min_severity: critical
+
+well_known_ports:
+  22: SSH
+  25: SMTP
+  53: DNS
+  80: HTTP Server
+  443: HTTPS Server
+  3000: Dev Server (React/Next.js)
+  3306: MySQL
+  5173: Vite Dev Server
+  5432: PostgreSQL
+  6379: Redis
+  8080: HTTP Alt / Spring Boot
+  8443: HTTPS Alt
+  9090: Prometheus
+  27017: MongoDB
+
+ai:
+  enabled: false
+  # provider: "anthropic"  -> /v1/messages (Claude)
+  # provider: "openai"     -> /v1/chat/completions
+  # provider: "openrouter" -> OpenAI-compatible endpoint
+  # provider: "minimax"    -> OpenAI-compatible endpoint
+  # provider: "groq"       -> OpenAI-compatible endpoint
+  # provider: "deepseek"   -> OpenAI-compatible endpoint
+  provider: minimax
+  api_key: ""
+  model: MiniMax-01
+  endpoint: ""
+  extra_headers: {}
+  auto_analyze_on_critical: true
+  max_tokens: 1024
+  max_requests_per_minute: 5
+  language: en
+  include_process_tree: true
+  include_port_map: true
+  history_context_duration: 5m
+  scheduler:
+    enabled: false
+    min_interval: 2m
+    max_cycles_per_hour: 12
+    max_reserved_tokens_per_day: 12000
+    cooldown_after_error: 10m
+    history_limit: 8
+  auto_action:
+    enabled: false
+    dry_run: true
+    allowed_actions:
+      - ignore
+      - protect
+      - add_rule
+    require_repeat_cycles: 2
+    cooldown_per_pid: 30m
+
+telegram:
+  enabled: false
+  bot_token: ""
+  allowed_chat_ids: []
+  api_base_url: https://api.telegram.org
+  poll_timeout: 25s
+  notify_on_critical: true
+  require_confirm: true
+  confirm_ttl: 90s
+
+ui:
+  theme: system
+  default_sort: cpu
+  default_sort_order: desc
+  sparkline_points: 60
+  process_table_page_size: 100
+  refresh_rate: 1s
