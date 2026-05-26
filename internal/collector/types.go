@@ -56,6 +56,7 @@ type InterfaceInfo struct {
 	OutPPS    uint64 `json:"out_pps"`
 	InErrors  uint64 `json:"in_errors"`
 	OutErrors uint64 `json:"out_errors"`
+	Address   string `json:"address"`
 }
 
 // NetworkMetrics aggregates network interfaces.
