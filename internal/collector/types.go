@@ -122,6 +122,57 @@ type PortBinding struct {
 	Since      int64  `json:"since"`
 }
 
+// CoreMetrics holds per-CPU-core info.
+type CoreMetrics struct {
+	ID        int     `json:"id"`
+	FreqMHz   float64 `json:"freq_mhz"`
+	Governor  string  `json:"governor"`
+	NumaNode  int     `json:"numa_node"`
+	Microcode string  `json:"microcode"`
+}
+
+// SensorMetric holds one sensor reading.
+type SensorMetric struct {
+	Name     string  `json:"name"`
+	Value    float64 `json:"value"`
+	Unit     string  `json:"unit"`
+	Critical float64 `json:"critical"`
+}
+
+// SyslogMetric represents one log entry for the API.
+type SyslogMetric struct {
+	Timestamp int64  `json:"timestamp"`
+	Facility  string `json:"facility"`
+	Severity  string `json:"severity"`
+	Message   string `json:"message"`
+	Source    string `json:"source"`
+}
+
+// ConnectionMetric represents one network connection.
+type ConnectionMetric struct {
+	Protocol   string `json:"protocol"`
+	LocalAddr  string `json:"local_addr"`
+	LocalPort  uint16 `json:"local_port"`
+	RemoteAddr string `json:"remote_addr"`
+	RemotePort uint16 `json:"remote_port"`
+	State      string `json:"state"`
+	PID        uint32 `json:"pid"`
+	Process    string `json:"process"`
+}
+
+// HostMetrics holds basic system identification.
+type HostMetrics struct {
+	Hostname      string  `json:"hostname"`
+	KernelVersion string  `json:"kernel_version"`
+	Arch          string  `json:"arch"`
+	OS            string  `json:"os"`
+	UptimeSeconds float64 `json:"uptime_seconds"`
+	User          string  `json:"user"`
+	UID           uint32  `json:"uid"`
+	Shell         string  `json:"shell"`
+	TTY           string  `json:"tty"`
+}
+
 // SystemSnapshot is the full state of the system at a point in time.
 type SystemSnapshot struct {
 	Timestamp    int64              `json:"timestamp"`
