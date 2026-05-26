@@ -56,23 +56,12 @@ function App() {
   const motionMul = tweaks.motion === "still" ? 0 : tweaks.motion === "calm" ? 1 : 2.0;
 
   useEffect(() => {
-    if (motionMul === 0) return;
     const id = setInterval(() => {
-      setLiveProcesses(prev => prev.map(p => {
-        if (Math.random() < 0.04 * motionMul) {
-          const base = p.isOperator ? 0.1 + Math.random() * 1.2
-                     : p.kind === "kernel" ? 1 + Math.random()*5
-                     : p.kind === "system" ? 1 + Math.random()*15
-                     : 4 + Math.random()*78;
-          p = { ...p, cpuTarget: base };
-        }
-        const diff = (p.cpuTarget - p.cpuLive);
-        const cpuLive = Math.max(0, Math.min(100, p.cpuLive + diff * 0.12 + (Math.random()-0.5) * 2.5 * motionMul));
-        return { ...p, cpuLive };
-      }));
-    }, 160);
+      const procs = window.NWL.makeProcesses();
+      if (procs.length > 0) setLiveProcesses(procs);
+    }, 2000);
     return () => clearInterval(id);
-  }, [motionMul]);
+  }, []);
 
   /* Core loads from live processes */
   const liveCoreLoads = useMemo(() => {
@@ -104,20 +93,12 @@ function App() {
   });
 
   useEffect(() => {
-    if (motionMul === 0) return;
     const id = setInterval(() => {
-      setMem(prev => {
-        const drift = (Math.random() - 0.5) * 80 * motionMul;
-        const used = Math.max(8000, Math.min(20000, prev.used + drift));
-        const buff = prev.buff + (Math.random()-0.5) * 20;
-        const cache = prev.cache + (Math.random()-0.5) * 60;
-        const free = prev.total - used - buff - cache;
-        const swap_used = Math.max(0, Math.min(prev.swap_total, prev.swap_used + (Math.random()-0.5) * 4));
-        return { ...prev, used, buff, cache, free, swap_used };
-      });
-    }, 1400);
+      const m = window.NWL.getMem && window.NWL.getMem();
+      if (m && m.total > 0) setMem(m);
+    }, 2000);
     return () => clearInterval(id);
-  }, [motionMul]);
+  }, []);
 
   // 1-saniyelik history & snapshot tick
   useEffect(() => {
@@ -160,16 +141,14 @@ function App() {
   const [filter, setFilter] = useState("all");
 
   useEffect(() => {
-    if (motionMul === 0) return;
-    const baseDelay = tweaks.motion === "living" ? 1600 : 3000;
     const id = setInterval(() => {
-      if (Math.random() < 0.18) return;
       const e = window.NWL.emitSyslogEvent();
+      if (!e) return;
       setSyslog(prev => [e, ...prev].slice(0, 400));
-      if (e.sev === "crit") setAlerts(prev => [e, ...prev].slice(0, 6));
-    }, baseDelay);
+      if (e.sev === 'crit') setAlerts(prev => [e, ...prev].slice(0, 6));
+    }, 2000);
     return () => clearInterval(id);
-  }, [motionMul, tweaks.motion]);
+  }, []);
 
   /* Load avg pulse */
   const [pulseData, setPulseData] = useState(() =>
@@ -208,27 +187,27 @@ function App() {
     return m;
   });
   useEffect(() => {
-    if (motionMul === 0) return;
-    const id = setInterval(() => {
-      setIfSparks(prev => {
-        const next = {};
-        window.NWL.NETWORK_IFS.forEach(i => {
-          const isWlan = i.name === "wlp3s0";
-          const burst = Math.random() < 0.05 ? Math.random() * 3 : 0;
-          const rx = (prev[i.name].rx || []);
-          const tx = (prev[i.name].tx || []);
-          const newRx = i.state === "DOWN" ? 0 : Math.max(0, i.rxBase + Math.random() * 0.6 + burst);
-          const newTx = i.state === "DOWN" ? 0 : Math.max(0, i.txBase + Math.random() * 0.3 + burst * 0.4);
-          next[i.name] = {
-            rx: [...rx.slice(1), newRx],
-            tx: [...tx.slice(1), newTx],
-          };
+    const id = setInterval(async () => {
+      try {
+        const res = await fetch(window.location.origin + '/api/v1/network');
+        if (!res.ok) return;
+        const data = await res.json();
+        const ifaces = data.interfaces || [];
+        setIfSparks(prev => {
+          const next = { ...prev };
+          ifaces.forEach(i => {
+            const old = prev[i.name] || { rx: Array(40).fill(0), tx: Array(40).fill(0) };
+            next[i.name] = {
+              rx: [...old.rx.slice(1), i.in_bps  / (1024 * 1024)],
+              tx: [...old.tx.slice(1), i.out_bps / (1024 * 1024)],
+            };
+          });
+          return next;
         });
-        return next;
-      });
-    }, 700);
+      } catch (e) {}
+    }, 2000);
     return () => clearInterval(id);
-  }, [motionMul]);
+  }, []);
 
   /* Disk IO */
   const [ioSpark, setIoSpark] = useState({
@@ -236,15 +215,22 @@ function App() {
     write: Array.from({length: 40}, () => Math.random() * 40),
   });
   useEffect(() => {
-    if (motionMul === 0) return;
-    const id = setInterval(() => {
-      setIoSpark(prev => ({
-        read:  [...prev.read.slice(1),  Math.max(0, 40 + Math.sin(Date.now()/3000) * 30 + Math.random() * 30)],
-        write: [...prev.write.slice(1), Math.max(0, 20 + Math.sin(Date.now()/4500) * 18 + Math.random() * 14)],
-      }));
-    }, 800);
+    const id = setInterval(async () => {
+      try {
+        const res = await fetch(window.location.origin + '/api/v1/disk');
+        if (!res.ok) return;
+        const data = await res.json();
+        const drives = data.drives || [];
+        const totalRead  = drives.reduce((s, d) => s + (d.read_bps  || 0), 0) / (1024 * 1024);
+        const totalWrite = drives.reduce((s, d) => s + (d.write_bps || 0), 0) / (1024 * 1024);
+        setIoSpark(prev => ({
+          read:  [...prev.read.slice(1),  Math.max(0, totalRead)],
+          write: [...prev.write.slice(1), Math.max(0, totalWrite)],
+        }));
+      } catch (e) {}
+    }, 2000);
     return () => clearInterval(id);
-  }, [motionMul]);
+  }, []);
 
   /* Selection & overlays */
   const [selectedCore, setSelectedCore] = useState(2);
